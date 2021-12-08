@@ -1,21 +1,21 @@
-## Supported tags
+<!-- ## Supported tags -->
 
-* [`2.4`, `latest` (*2.4/Dockerfile*)](https://github.com/BytemarkHosting/docker-webdav/blob/master/2.4/Dockerfile)
+<!-- * [`2.4`, `latest` (*2.4/Dockerfile*)](https://github.com/BytemarkHosting/docker-webdav/blob/master/2.4/Dockerfile) -->
+## Credits
+
+This image ist based on the great work of BytemarkHosting ([link to original repo](https://github.com/BytemarkHosting/docker-webdav)).
+
+## Build the image
+
+```
+docker build -t mschmitze87/webdav:1.1 .
+```
 
 ## Quick reference
 
 This image runs an easily configurable WebDAV server with Apache.
 
 You can configure the authentication type, the authentication of multiple users, or to run with a self-signed SSL certificate. If you want a Let's Encrypt certificate, see an example of how to do that [here](https://github.com/BytemarkHosting/configs-webdav-docker).
-
-* **Code repository:**
-  https://github.com/BytemarkHosting/docker-webdav
-* **Where to file issues:**
-  https://github.com/BytemarkHosting/docker-webdav/issues
-* **Maintained by:**
-  [Bytemark Hosting](https://www.bytemark.co.uk)
-* **Supported architectures:**
-  [Any architecture that the `httpd` image supports](https://hub.docker.com/_/httpd/)
 
 ## Usage
 
@@ -30,7 +30,7 @@ To make sure your data doesn't get deleted, you'll probably want to create a per
 ```
 docker run --restart always -v /srv/dav:/var/lib/dav \
     -e AUTH_TYPE=Digest -e USERNAME=alice -e PASSWORD=secret1234 \
-    --publish 80:80 -d bytemark/webdav
+    --publish 80:80 -d mschmitze87/webdav
 
 ```
 
@@ -40,7 +40,7 @@ docker run --restart always -v /srv/dav:/var/lib/dav \
 version: '3'
 services:
   webdav:
-    image: bytemark/webdav
+    image: mschmitze87/webdav
     restart: always
     ports:
       - "80:80"
@@ -61,7 +61,7 @@ If you're happy with a self-signed SSL certificate, specify `-e SSL_CERT=selfsig
 ```
 docker run --restart always -v /srv/dav:/var/lib/dav \
     -e AUTH_TYPE=Basic -e USERNAME=test -e PASSWORD=test \
-    -e SSL_CERT=selfsigned --publish 443:443 -d bytemark/webdav
+    -e SSL_CERT=selfsigned --publish 443:443 -d mschmitze87/webdav
 
 ```
 
