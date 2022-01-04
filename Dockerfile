@@ -1,11 +1,11 @@
-FROM httpd:2.4.51-bullseye
+FROM httpd:2.4.52-bullseye
 
-# These variables are inherited from the httpd:alpine image:
+# These variables are inherited from the httpd image:
 # ENV HTTPD_PREFIX /usr/local/apache2
 # WORKDIR "$HTTPD_PREFIX"
 
 # Copy in our configuration files.
-COPY conf/ conf/
+COPY --chown=nobody:nogroup conf/ conf/
 
 RUN set -ex; \
     # Create empty default DocumentRoot.
@@ -13,8 +13,6 @@ RUN set -ex; \
     # Create directories for Dav data and lock database.
     mkdir -p "/var/lib/dav/data"; \
     touch "/var/lib/dav/DavLock"; \
-    chown -R www-data:www-data "/var/lib/dav"; \
-    \
     # Enable DAV modules.
     for i in dav dav_fs; do \
         sed -i -e "/^#LoadModule ${i}_module.*/s/^#//" "conf/httpd.conf"; \
@@ -31,9 +29,11 @@ RUN set -ex; \
     done; \
     \
     # Run httpd as "www-data" (instead of "daemon").
-    for i in User Group; do \
-        sed -i -e "s|^$i .*|$i www-data|" "conf/httpd.conf"; \
-    done; \
+    # for i in User Group; do \
+    #     sed -i -e "s|^$i .*|$i www-data|" "conf/httpd.conf"; \
+    # done; \
+    sed -i -e "s|^User .*|User nobody|" "conf/httpd.conf"; \
+    sed -i -e "s|^Group .*|Group nogroup|" "conf/httpd.conf"; \
     \
     # Include enabled configs and sites.
     printf '%s\n' "Include conf/conf-enabled/*.conf" \
@@ -48,7 +48,10 @@ RUN set -ex; \
     ln -s ../sites-available/default.conf "conf/sites-enabled"; \
     # Install openssl if we need to generate a self-signed certificate.
     apt update; \
-    apt install openssl
+    apt install -y openssl; \
+    chown -R nobody:nogroup $HTTPD_PREFIX; \
+    chown -R nobody:nogroup "/var/lib/dav"; \
+    chown -R nobody:nogroup "/var/www";
     # apk add --no-cache openssl
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
