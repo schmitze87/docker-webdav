@@ -1,4 +1,4 @@
-FROM httpd:2.4.52-bullseye
+FROM httpd:2.4-bullseye
 
 # These variables are inherited from the httpd image:
 # ENV HTTPD_PREFIX /usr/local/apache2
